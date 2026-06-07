@@ -1,4 +1,6 @@
 "use strict";
+// Schlüsselname für den Browser-Speicher
+const storageKey = "entwickler-dashboard-projekte";
 // Holt das Begrüßungsfeld aus der HTML-Datei
 const welcomeText = document.getElementById("welcomeText");
 // Holt den Bereich, in dem alle Projektkarten angezeigt werden
@@ -15,7 +17,7 @@ const projectStatusSelect = document.getElementById("projectStatusSelect");
 const projectProgressInput = document.getElementById("projectProgressInput");
 const addProjectButton = document.getElementById("addProjectButton");
 // Startliste mit Beispielprojekten
-const projects = [
+const defaultProjects = [
     {
         name: "Notiz-App",
         language: "JavaScript",
@@ -41,6 +43,20 @@ const projects = [
         progress: 25,
     },
 ];
+// Lädt gespeicherte Projekte aus dem Browser
+function loadProjects() {
+    const savedProjects = localStorage.getItem(storageKey);
+    if (savedProjects === null) {
+        return defaultProjects;
+    }
+    return JSON.parse(savedProjects);
+}
+// Speichert die aktuelle Projektliste im Browser
+function saveProjects() {
+    localStorage.setItem(storageKey, JSON.stringify(projects));
+}
+// Aktive Projektliste
+let projects = loadProjects();
 // Gibt je nach Projektstatus die passenden Tailwind-CSS-Klassen zurück
 function getStatusClass(status) {
     if (status === "Fertig") {
@@ -115,6 +131,7 @@ function changeProjectStatus(index) {
         projects[index].status = "Geplant";
         projects[index].progress = 0;
     }
+    saveProjects();
     renderProjects();
 }
 // Baut alle Projektkarten neu auf
@@ -191,6 +208,7 @@ function addProject() {
         progress: progress,
     };
     projects.push(newProject);
+    saveProjects();
     projectNameInput.value = "";
     projectProgressInput.value = "0";
     renderProjects();
@@ -219,6 +237,7 @@ function connectDeleteButtons() {
             }
             const index = Number(indexText);
             projects.splice(index, 1);
+            saveProjects();
             renderProjects();
         });
     });
@@ -226,7 +245,7 @@ function connectDeleteButtons() {
 // Setzt den Begrüßungstext
 if (welcomeText) {
     welcomeText.textContent =
-        "Willkommen zu deinem Entwickler-Dashboard mit TypeScript und Tailwind CSS.";
+        "Willkommen zu deinem Entwickler-Dashboard mit TypeScript, Tailwind CSS und Browser-Speicher.";
 }
 // Verbindet den Hinzufügen-Button mit der Funktion addProject
 if (addProjectButton) {

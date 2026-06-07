@@ -1,3 +1,6 @@
+// Schlüsselname für den Browser-Speicher
+const storageKey = "entwickler-dashboard-projekte";
+
 // Holt das Begrüßungsfeld aus der HTML-Datei
 const welcomeText = document.getElementById("welcomeText");
 
@@ -26,7 +29,7 @@ type Project = {
 };
 
 // Startliste mit Beispielprojekten
-const projects: Project[] = [
+const defaultProjects: Project[] = [
     {
         name: "Notiz-App",
         language: "JavaScript",
@@ -52,6 +55,25 @@ const projects: Project[] = [
         progress: 25,
     },
 ];
+
+// Lädt gespeicherte Projekte aus dem Browser
+function loadProjects(): Project[] {
+    const savedProjects = localStorage.getItem(storageKey);
+
+    if (savedProjects === null) {
+        return defaultProjects;
+    }
+
+    return JSON.parse(savedProjects) as Project[];
+}
+
+// Speichert die aktuelle Projektliste im Browser
+function saveProjects(): void {
+    localStorage.setItem(storageKey, JSON.stringify(projects));
+}
+
+// Aktive Projektliste
+let projects: Project[] = loadProjects();
 
 // Gibt je nach Projektstatus die passenden Tailwind-CSS-Klassen zurück
 function getStatusClass(status: string): string {
@@ -144,6 +166,7 @@ function changeProjectStatus(index: number): void {
         projects[index].progress = 0;
     }
 
+    saveProjects();
     renderProjects();
 }
 
@@ -232,6 +255,8 @@ function addProject(): void {
 
     projects.push(newProject);
 
+    saveProjects();
+
     projectNameInput.value = "";
     projectProgressInput.value = "0";
 
@@ -271,6 +296,7 @@ function connectDeleteButtons(): void {
 
             projects.splice(index, 1);
 
+            saveProjects();
             renderProjects();
         });
     });
@@ -279,7 +305,7 @@ function connectDeleteButtons(): void {
 // Setzt den Begrüßungstext
 if (welcomeText) {
     welcomeText.textContent =
-        "Willkommen zu deinem Entwickler-Dashboard mit TypeScript und Tailwind CSS.";
+        "Willkommen zu deinem Entwickler-Dashboard mit TypeScript, Tailwind CSS und Browser-Speicher.";
 }
 
 // Verbindet den Hinzufügen-Button mit der Funktion addProject
