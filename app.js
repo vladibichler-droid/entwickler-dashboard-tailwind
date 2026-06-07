@@ -3,6 +3,11 @@
 const welcomeText = document.getElementById("welcomeText");
 // Holt den Bereich, in dem alle Projektkarten angezeigt werden
 const projectList = document.getElementById("projectList");
+// Holt die Statistikfelder aus der HTML-Datei
+const totalProjects = document.getElementById("totalProjects");
+const plannedProjects = document.getElementById("plannedProjects");
+const workingProjects = document.getElementById("workingProjects");
+const finishedProjects = document.getElementById("finishedProjects");
 // Holt die Eingabefelder und den Button aus der HTML-Datei
 const projectNameInput = document.getElementById("projectNameInput");
 const projectLanguageSelect = document.getElementById("projectLanguageSelect");
@@ -76,6 +81,25 @@ function cleanProgress(progress) {
     }
     return progress;
 }
+// Aktualisiert die Statistik oben im Dashboard
+function updateProjectStats() {
+    const totalCount = projects.length;
+    const plannedCount = projects.filter((project) => project.status === "Geplant").length;
+    const workingCount = projects.filter((project) => project.status === "In Arbeit").length;
+    const finishedCount = projects.filter((project) => project.status === "Fertig").length;
+    if (totalProjects) {
+        totalProjects.textContent = String(totalCount);
+    }
+    if (plannedProjects) {
+        plannedProjects.textContent = String(plannedCount);
+    }
+    if (workingProjects) {
+        workingProjects.textContent = String(workingCount);
+    }
+    if (finishedProjects) {
+        finishedProjects.textContent = String(finishedCount);
+    }
+}
 // Ändert den Status eines Projekts in einer festen Reihenfolge
 function changeProjectStatus(index) {
     const currentStatus = projects[index].status;
@@ -148,6 +172,7 @@ function renderProjects() {
     });
     connectStatusButtons();
     connectDeleteButtons();
+    updateProjectStats();
 }
 // Fügt ein neues Projekt zur Liste hinzu
 function addProject() {
