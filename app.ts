@@ -67,6 +67,21 @@ function getStatusIcon(status: string): string {
     return "🔵";
 }
 
+// Ändert den Status eines Projekts in einer festen Reihenfolge
+function changeProjectStatus(index: number): void {
+    const currentStatus = projects[index].status;
+
+    if (currentStatus === "Geplant") {
+        projects[index].status = "In Arbeit";
+    } else if (currentStatus === "In Arbeit") {
+        projects[index].status = "Fertig";
+    } else {
+        projects[index].status = "Geplant";
+    }
+
+    renderProjects();
+}
+
 // Baut alle Projektkarten neu auf
 function renderProjects(): void {
     if (!projectList) {
@@ -92,17 +107,27 @@ function renderProjects(): void {
                 ${getStatusIcon(project.status)} ${project.status}
             </span>
 
-            <button
-                class="delete-button mt-5 w-full bg-red-600 hover:bg-red-500 rounded-lg px-4 py-2 font-semibold transition"
-                data-index="${index}"
-            >
-                🗑 Löschen
-            </button>
+            <div class="mt-5 flex gap-2">
+                <button
+                    class="status-button flex-1 bg-blue-600 hover:bg-blue-500 rounded-lg px-4 py-2 font-semibold transition"
+                    data-index="${index}"
+                >
+                    Status ändern
+                </button>
+
+                <button
+                    class="delete-button flex-1 bg-red-600 hover:bg-red-500 rounded-lg px-4 py-2 font-semibold transition"
+                    data-index="${index}"
+                >
+                    🗑 Löschen
+                </button>
+            </div>
         `;
 
         projectList.appendChild(projectCard);
     });
 
+    connectStatusButtons();
     connectDeleteButtons();
 }
 
@@ -128,6 +153,23 @@ function addProject(): void {
     projectNameInput.value = "";
 
     renderProjects();
+}
+
+// Verbindet alle Status-Buttons mit einer Klick-Funktion
+function connectStatusButtons(): void {
+    const statusButtons = document.querySelectorAll(".status-button");
+
+    statusButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            const indexText = button.getAttribute("data-index");
+
+            if (indexText === null) {
+                return;
+            }
+
+            changeProjectStatus(Number(indexText));
+        });
+    });
 }
 
 // Verbindet alle Löschen-Buttons mit einer Klick-Funktion
