@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entwickler Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen">
+
+    <header class="bg-slate-800 shadow-lg">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <h1 class="text-3xl font-bold">
+                Entwickler Dashboard
+            </h1>
+            <p class="text-slate-400 mt-1">
+                Deine Projekte sauber im Blick
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto p-6">
+
+        <section class="bg-slate-800 rounded-xl p-6 shadow-lg mb-6">
+            <h2 class="text-2xl font-semibold mb-4">
+                Willkommen
+            </h2>
+
+            <p id="welcomeText" class="text-slate-300">
+                Dashboard wird geladen...
+            </p>
+        </section>
+
+        <section class="bg-slate-800 rounded-xl p-6 shadow-lg mb-6">
+            <h2 class="text-2xl font-semibold mb-4">
+                Neues Projekt hinzufügen
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <input
+                    id="projectNameInput"
+                    type="text"
+                    placeholder="Projektname"
+                    class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white outline-none focus:border-blue-400"
+                >
+
+                <select
+                    id="projectLanguageSelect"
+                    class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white outline-none focus:border-blue-400"
+                >
+                    <option>HTML</option>
+                    <option>CSS</option>
+                    <option>JavaScript</option>
+                    <option>TypeScript</option>
+                    <option>Python</option>
+                    <option>Lua</option>
+                    <option>Ruby</option>
+                    <option>Go</option>
+                    <option>Nim</option>
+                </select>
+
+                <select
+                    id="projectStatusSelect"
+                    class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white outline-none focus:border-blue-400"
+                >
+                    <option>Geplant</option>
+                    <option>In Arbeit</option>
+                    <option>Fertig</option>
+                </select>
+
+                <button
+                    id="addProjectButton"
+                    class="bg-blue-600 hover:bg-blue-500 rounded-lg px-4 py-3 font-semibold transition"
+                >
+                    Projekt hinzufügen
+                </button>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-semibold mb-4">
+                Meine Projekte
+            </h2>
+
+            <div id="projectList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
+        </section>
+
+    </main>
+
+    <script src="app.js"></script>
+
+</body>
+</html>
