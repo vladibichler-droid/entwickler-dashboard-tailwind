@@ -1,6 +1,8 @@
 "use strict";
 // Schlüsselname für den Browser-Speicher
 const storageKey = "entwickler-dashboard-projekte";
+// Aktueller Filter
+let currentFilter = "Alle";
 // Holt das Begrüßungsfeld aus der HTML-Datei
 const welcomeText = document.getElementById("welcomeText");
 // Holt den Bereich, in dem alle Projektkarten angezeigt werden
@@ -116,7 +118,14 @@ function updateProjectStats() {
         finishedProjects.textContent = String(finishedCount);
     }
 }
-// Ändert den Status eines Projekts in einer festen Reihenfolge
+// Liefert die gefilterten Projekte zurück
+function getFilteredProjects() {
+    if (currentFilter === "Alle") {
+        return projects;
+    }
+    return projects.filter((project) => project.status === currentFilter);
+}
+// Ändert den Status eines Projekts
 function changeProjectStatus(index) {
     const currentStatus = projects[index].status;
     if (currentStatus === "Geplant") {
@@ -140,7 +149,8 @@ function renderProjects() {
         return;
     }
     projectList.innerHTML = "";
-    projects.forEach((project, index) => {
+    getFilteredProjects().forEach((project) => {
+        const originalIndex = projects.indexOf(project);
         const projectCard = document.createElement("article");
         projectCard.className =
             "bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-lg hover:border-slate-500 transition";
@@ -172,14 +182,14 @@ function renderProjects() {
             <div class="mt-5 flex gap-2">
                 <button
                     class="status-button flex-1 bg-blue-600 hover:bg-blue-500 rounded-lg px-4 py-2 font-semibold transition"
-                    data-index="${index}"
+                    data-index="${originalIndex}"
                 >
                     Status ändern
                 </button>
 
                 <button
                     class="delete-button flex-1 bg-red-600 hover:bg-red-500 rounded-lg px-4 py-2 font-semibold transition"
-                    data-index="${index}"
+                    data-index="${originalIndex}"
                 >
                     🗑 Löschen
                 </button>
@@ -189,6 +199,7 @@ function renderProjects() {
     });
     connectStatusButtons();
     connectDeleteButtons();
+    connectFilterButtons();
     updateProjectStats();
 }
 // Fügt ein neues Projekt zur Liste hinzu
@@ -242,10 +253,24 @@ function connectDeleteButtons() {
         });
     });
 }
+// Verbindet alle Filter-Buttons mit einer Klick-Funktion
+function connectFilterButtons() {
+    const filterButtons = document.querySelectorAll(".filter-button");
+    filterButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            const filter = button.getAttribute("data-filter");
+            if (filter === null) {
+                return;
+            }
+            currentFilter = filter;
+            renderProjects();
+        });
+    });
+}
 // Setzt den Begrüßungstext
 if (welcomeText) {
     welcomeText.textContent =
-        "Willkommen zu deinem Entwickler-Dashboard mit TypeScript, Tailwind CSS und Browser-Speicher.";
+        "Willkommen zu deinem Entwickler-Dashboard mit TypeScript, Tailwind CSS, Browser-Speicher und Filterfunktion.";
 }
 // Verbindet den Hinzufügen-Button mit der Funktion addProject
 if (addProjectButton) {
