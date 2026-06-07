@@ -37,7 +37,7 @@
                 Neues Projekt hinzufügen
             </h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <input
                     id="projectNameInput"
                     type="text"
@@ -68,6 +68,16 @@
                     <option>In Arbeit</option>
                     <option>Fertig</option>
                 </select>
+
+                <input
+                    id="projectProgressInput"
+                    type="number"
+                    min="0"
+                    max="100"
+                    value="0"
+                    placeholder="Fortschritt %"
+                    class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white outline-none focus:border-blue-400"
+                >
 
                 <button
                     id="addProjectButton"

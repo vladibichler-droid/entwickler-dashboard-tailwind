@@ -7,6 +7,7 @@ const projectList = document.getElementById("projectList");
 const projectNameInput = document.getElementById("projectNameInput");
 const projectLanguageSelect = document.getElementById("projectLanguageSelect");
 const projectStatusSelect = document.getElementById("projectStatusSelect");
+const projectProgressInput = document.getElementById("projectProgressInput");
 const addProjectButton = document.getElementById("addProjectButton");
 // Startliste mit Beispielprojekten
 const projects = [
@@ -14,21 +15,25 @@ const projects = [
         name: "Notiz-App",
         language: "JavaScript",
         status: "Fertig",
+        progress: 100,
     },
     {
         name: "NOC Dashboard",
         language: "TypeScript",
         status: "In Arbeit",
+        progress: 60,
     },
     {
         name: "CNC Werkzeugliste",
         language: "Lua",
         status: "Fertig",
+        progress: 100,
     },
     {
         name: "Entwickler Dashboard",
         language: "TypeScript",
         status: "Geplant",
+        progress: 25,
     },
 ];
 // Gibt je nach Projektstatus die passenden Tailwind-CSS-Klassen zurück
@@ -51,17 +56,40 @@ function getStatusIcon(status) {
     }
     return "🔵";
 }
+// Gibt je nach Fortschritt eine passende Farbe für den Balken zurück
+function getProgressBarClass(progress) {
+    if (progress >= 100) {
+        return "bg-green-500";
+    }
+    if (progress >= 50) {
+        return "bg-yellow-500";
+    }
+    return "bg-blue-500";
+}
+// Achtet darauf, dass der Fortschritt immer zwischen 0 und 100 bleibt
+function cleanProgress(progress) {
+    if (progress < 0) {
+        return 0;
+    }
+    if (progress > 100) {
+        return 100;
+    }
+    return progress;
+}
 // Ändert den Status eines Projekts in einer festen Reihenfolge
 function changeProjectStatus(index) {
     const currentStatus = projects[index].status;
     if (currentStatus === "Geplant") {
         projects[index].status = "In Arbeit";
+        projects[index].progress = 50;
     }
     else if (currentStatus === "In Arbeit") {
         projects[index].status = "Fertig";
+        projects[index].progress = 100;
     }
     else {
         projects[index].status = "Geplant";
+        projects[index].progress = 0;
     }
     renderProjects();
 }
@@ -85,6 +113,20 @@ function renderProjects() {
             <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full border text-sm font-medium ${getStatusClass(project.status)}">
                 ${getStatusIcon(project.status)} ${project.status}
             </span>
+
+            <div class="mt-5">
+                <div class="flex justify-between text-sm text-slate-300 mb-2">
+                    <span>Fortschritt</span>
+                    <span>${project.progress}%</span>
+                </div>
+
+                <div class="w-full bg-slate-700 rounded-full h-3 overflow-hidden">
+                    <div
+                        class="${getProgressBarClass(project.progress)} h-3 rounded-full transition-all"
+                        style="width: ${project.progress}%"
+                    ></div>
+                </div>
+            </div>
 
             <div class="mt-5 flex gap-2">
                 <button
@@ -112,6 +154,7 @@ function addProject() {
     const name = projectNameInput.value.trim();
     const language = projectLanguageSelect.value;
     const status = projectStatusSelect.value;
+    const progress = cleanProgress(Number(projectProgressInput.value));
     if (name === "") {
         alert("Bitte gib einen Projektnamen ein.");
         return;
@@ -120,9 +163,11 @@ function addProject() {
         name: name,
         language: language,
         status: status,
+        progress: progress,
     };
     projects.push(newProject);
     projectNameInput.value = "";
+    projectProgressInput.value = "0";
     renderProjects();
 }
 // Verbindet alle Status-Buttons mit einer Klick-Funktion
