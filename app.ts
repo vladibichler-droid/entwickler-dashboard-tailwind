@@ -1,12 +1,23 @@
+// Holt das Begrüßungsfeld aus der HTML-Datei
 const welcomeText = document.getElementById("welcomeText");
+
+// Holt den Bereich, in dem alle Projektkarten angezeigt werden
 const projectList = document.getElementById("projectList");
 
+// Holt die Eingabefelder und den Button aus der HTML-Datei
+const projectNameInput = document.getElementById("projectNameInput") as HTMLInputElement;
+const projectLanguageSelect = document.getElementById("projectLanguageSelect") as HTMLSelectElement;
+const projectStatusSelect = document.getElementById("projectStatusSelect") as HTMLSelectElement;
+const addProjectButton = document.getElementById("addProjectButton");
+
+// Beschreibt, welche Eigenschaften ein Projekt haben muss
 type Project = {
     name: string;
     language: string;
     status: string;
 };
 
+// Startliste mit Beispielprojekten
 const projects: Project[] = [
     {
         name: "Notiz-App",
@@ -30,6 +41,7 @@ const projects: Project[] = [
     },
 ];
 
+// Gibt je nach Projektstatus die passenden Tailwind-CSS-Klassen zurück
 function getStatusClass(status: string): string {
     if (status === "Fertig") {
         return "bg-green-500/20 text-green-300 border-green-500/30";
@@ -42,6 +54,7 @@ function getStatusClass(status: string): string {
     return "bg-blue-500/20 text-blue-300 border-blue-500/30";
 }
 
+// Gibt je nach Projektstatus das passende Symbol zurück
 function getStatusIcon(status: string): string {
     if (status === "Fertig") {
         return "🟢";
@@ -54,15 +67,15 @@ function getStatusIcon(status: string): string {
     return "🔵";
 }
 
-if (welcomeText) {
-    welcomeText.textContent =
-        "Willkommen zu deinem Entwickler-Dashboard mit TypeScript und Tailwind CSS.";
-}
+// Baut alle Projektkarten neu auf
+function renderProjects(): void {
+    if (!projectList) {
+        return;
+    }
 
-if (projectList) {
     projectList.innerHTML = "";
 
-    projects.forEach((project) => {
+    projects.forEach((project, index) => {
         const projectCard = document.createElement("article");
 
         projectCard.className =
@@ -78,8 +91,76 @@ if (projectList) {
             <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full border text-sm font-medium ${getStatusClass(project.status)}">
                 ${getStatusIcon(project.status)} ${project.status}
             </span>
+
+            <button
+                class="delete-button mt-5 w-full bg-red-600 hover:bg-red-500 rounded-lg px-4 py-2 font-semibold transition"
+                data-index="${index}"
+            >
+                🗑 Löschen
+            </button>
         `;
 
         projectList.appendChild(projectCard);
     });
+
+    connectDeleteButtons();
 }
+
+// Fügt ein neues Projekt zur Liste hinzu
+function addProject(): void {
+    const name = projectNameInput.value.trim();
+    const language = projectLanguageSelect.value;
+    const status = projectStatusSelect.value;
+
+    if (name === "") {
+        alert("Bitte gib einen Projektnamen ein.");
+        return;
+    }
+
+    const newProject: Project = {
+        name: name,
+        language: language,
+        status: status,
+    };
+
+    projects.push(newProject);
+
+    projectNameInput.value = "";
+
+    renderProjects();
+}
+
+// Verbindet alle Löschen-Buttons mit einer Klick-Funktion
+function connectDeleteButtons(): void {
+    const deleteButtons = document.querySelectorAll(".delete-button");
+
+    deleteButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            const indexText = button.getAttribute("data-index");
+
+            if (indexText === null) {
+                return;
+            }
+
+            const index = Number(indexText);
+
+            projects.splice(index, 1);
+
+            renderProjects();
+        });
+    });
+}
+
+// Setzt den Begrüßungstext
+if (welcomeText) {
+    welcomeText.textContent =
+        "Willkommen zu deinem Entwickler-Dashboard mit TypeScript und Tailwind CSS.";
+}
+
+// Verbindet den Hinzufügen-Button mit der Funktion addProject
+if (addProjectButton) {
+    addProjectButton.addEventListener("click", addProject);
+}
+
+// Startet die erste Anzeige der Projektkarten
+renderProjects();
